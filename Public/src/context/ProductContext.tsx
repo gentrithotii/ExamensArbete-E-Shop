@@ -1,0 +1,46 @@
+
+import React, { createContext, useState, useEffect } from "react";
+import { Product } from "../types/product";
+import { getProducts } from '../services/productService';
+
+interface ProductContextProps {
+  products: Product[];
+  loading: boolean;
+  error: string;
+}
+
+export const ProductContext = createContext<ProductContextProps>({
+  products: [],
+  loading: true,
+  error: '',
+});
+
+interface ProductProviderProps {
+  children: React.ReactNode;
+}
+
+export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>('');
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const products = await getProducts();
+        setProducts(products);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
+
+  return (
+    <ProductContext.Provider value={{ products, loading, error }}>
+      {children}
+    </ProductContext.Provider>
+  );
+};
