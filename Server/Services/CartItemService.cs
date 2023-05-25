@@ -27,12 +27,12 @@ public class CartItemService : ICartItemService
 
     public async Task<IEnumerable<CartItem>> GetAllCartItemsAsync()
     {
-        return await _context.CartItems.Include(c => c.Product).ToListAsync();
+        return await _context.CartItems.Include(c => c.Product).ThenInclude(p => p.Images).ToListAsync();
     }
 
     public async Task<CartItem> GetCartItemByIdAsync(int id)
     {
-        var cartItem = await _context.CartItems.Include(c => c.Product).FirstOrDefaultAsync(c => c.Id == id);
+        var cartItem = await _context.CartItems.Include(c => c.Product).ThenInclude(p => p.Images).FirstOrDefaultAsync(c => c.Id == id);
 
         if (cartItem == null)
             throw new Exception($"No cart item found with ID: {id}");

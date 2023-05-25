@@ -4,7 +4,7 @@ import { ProductProvider } from './context/ProductContext';
 import { CartProvider } from './context/CartContext';
 import { OrderProvider } from './context/OrderContext';
 
-// import HomePage from './pages/HomePage';
+import HomePage from './pages/HomePage';
 import ProductPage from './pages/ProductPage';
 import CartPage from './pages/PageCart';
 import OrderPage from './pages/OrderPage';
@@ -16,7 +16,7 @@ function App() {
         <CartProvider>
           <OrderProvider>
             <Routes>
-              {/* <Route path="/" element={<HomePage />} /> */}
+              <Route path="/" element={<HomePage />} />
               <Route path="/products" element={<ProductPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/orders" element={<OrderPage />} />

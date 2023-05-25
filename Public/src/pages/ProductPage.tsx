@@ -5,6 +5,8 @@ import React from 'react';
 const ProductPage = () => {
   const { products } = useContext(ProductContext);
 
+
+
   return (
     <div>
       {products.map((product) => (
