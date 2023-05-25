@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230518110510_InitialCreate")]
+    [Migration("20230525182059_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -81,7 +81,6 @@ namespace Server.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Url")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -240,11 +239,9 @@ namespace Server.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Price")

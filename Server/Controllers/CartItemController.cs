@@ -4,7 +4,7 @@ using Server.Services;
 using Server.Services.InterfacesServices;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class CartItemsController : ControllerBase
 {
     private readonly ICartItemService _cartItemService;
