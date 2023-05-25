@@ -42,21 +42,6 @@ public class ApplicationDbContext : DbContext
             new CartItem { Id = 5, ProductId = 5, Quantity = 5 }
         );
 
-        modelBuilder.Entity<Order>().HasData(
-            new Order { Id = 1, TotalPrice = 1200.50M },
-            new Order { Id = 2, TotalPrice = 1701.98M },
-            new Order { Id = 3, TotalPrice = 600.00M },
-            new Order { Id = 4, TotalPrice = 1000.00M },
-            new Order { Id = 5, TotalPrice = 7500.00M }
-        );
-
-        modelBuilder.Entity<OrderItem>().HasData(
-            new OrderItem { Id = 1, OrderId = 1, ProductId = 1, Quantity = 1 },
-            new OrderItem { Id = 2, OrderId = 2, ProductId = 2, Quantity = 2 },
-            new OrderItem { Id = 3, OrderId = 3, ProductId = 3, Quantity = 3 },
-            new OrderItem { Id = 4, OrderId = 4, ProductId = 4, Quantity = 4 },
-            new OrderItem { Id = 5, OrderId = 5, ProductId = 5, Quantity = 5 }
-        );
 
     }
 

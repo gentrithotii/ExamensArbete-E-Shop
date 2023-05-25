@@ -110,18 +110,6 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Orders",
-                columns: new[] { "Id", "OrderDate", "TotalPrice" },
-                values: new object[,]
-                {
-                    { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1200.50m },
-                    { 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1701.98m },
-                    { 3, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 600.00m },
-                    { 4, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1000.00m },
-                    { 5, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 7500.00m }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Products",
                 columns: new[] { "Id", "Description", "Name", "Price" },
                 values: new object[,]
@@ -155,18 +143,6 @@ namespace Server.Migrations
                     { 3, 3, "https://example.com/images/headphones.jpg" },
                     { 4, 4, "https://example.com/images/smart_watch.jpg" },
                     { 5, 5, "https://example.com/images/camera.jpg" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "OrderItem",
-                columns: new[] { "Id", "OrderId", "ProductId", "Quantity" },
-                values: new object[,]
-                {
-                    { 1, 1, 1, 1 },
-                    { 2, 2, 2, 2 },
-                    { 3, 3, 3, 3 },
-                    { 4, 4, 4, 4 },
-                    { 5, 5, 5, 5 }
                 });
 
             migrationBuilder.CreateIndex(

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.Models;
@@ -14,15 +15,19 @@ public class OrderService : IOrderService
         _context = context;
     }
 
-    public async Task<Order> AddOrderAsync(Order order)
+    public async Task<Order> AddOrderAsync(Order order, IEnumerable<OrderItem> orderItems)
     {
         if (order == null)
         {
             throw new ArgumentNullException(nameof(order));
         }
 
-       
-        foreach (var item in order.OrderItems)
+        if (orderItems == null)
+        {
+            throw new ArgumentNullException(nameof(orderItems));
+        }
+
+        foreach (var item in orderItems)
         {
             var product = await _context.Products.FindAsync(item.ProductId);
             if (product == null)
@@ -30,15 +35,19 @@ public class OrderService : IOrderService
                 throw new Exception($"Product with id: {item.ProductId} not found.");
             }
 
-           
             order.TotalPrice += item.Quantity * product.Price;
         }
 
         await _context.Orders.AddAsync(order);
         await _context.SaveChangesAsync();
 
+        var cartItemsToDelete = _context.CartItems.Where(c => orderItems.Select(oi => oi.ProductId).Contains(c.ProductId));
+        _context.CartItems.RemoveRange(cartItemsToDelete);
+        await _context.SaveChangesAsync();
+
         return order;
     }
+
 
     public async Task<IEnumerable<Order>> GetAllOrdersAsync()
     {

@@ -134,38 +134,6 @@ namespace Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Orders");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            OrderDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TotalPrice = 1200.50m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            OrderDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TotalPrice = 1701.98m
-                        },
-                        new
-                        {
-                            Id = 3,
-                            OrderDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TotalPrice = 600.00m
-                        },
-                        new
-                        {
-                            Id = 4,
-                            OrderDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TotalPrice = 1000.00m
-                        },
-                        new
-                        {
-                            Id = 5,
-                            OrderDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TotalPrice = 7500.00m
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.OrderItem", b =>
@@ -190,43 +158,6 @@ namespace Server.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("OrderItem");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            OrderId = 1,
-                            ProductId = 1,
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            OrderId = 2,
-                            ProductId = 2,
-                            Quantity = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            OrderId = 3,
-                            ProductId = 3,
-                            Quantity = 3
-                        },
-                        new
-                        {
-                            Id = 4,
-                            OrderId = 4,
-                            ProductId = 4,
-                            Quantity = 4
-                        },
-                        new
-                        {
-                            Id = 5,
-                            OrderId = 5,
-                            ProductId = 5,
-                            Quantity = 5
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.Product", b =>

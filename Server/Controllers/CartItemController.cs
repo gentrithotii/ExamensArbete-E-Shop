@@ -15,14 +15,34 @@ public class CartItemsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddCartItem([FromBody] CartItem cartItem)
+    public async Task<IActionResult> AddCartItem(int productId)
     {
-        if (cartItem == null)
-            return BadRequest();
+        try
+        {
 
-        var createdCartItem = await _cartItemService.AddCartItemAsync(cartItem);
-        return CreatedAtAction(nameof(GetCartItem), new { id = createdCartItem.Id }, createdCartItem);
+            if (productId <= 0)
+                return BadRequest("Invalid product ID");
+
+            var createdCartItem = await _cartItemService.AddCartItemAsync(productId);
+
+
+            if (createdCartItem == null)
+                return BadRequest("CartItem could not be created");
+
+            return CreatedAtAction(nameof(GetCartItem), new { id = createdCartItem.Id }, createdCartItem);
+        }
+        catch (ArgumentException)
+        {
+
+            return BadRequest("Invalid argument. Please provide a valid product ID.");
+        }
+        catch (Exception)
+        {
+
+            return StatusCode(500, "An error occurred while creating the CartItem. Please try again later.");
+        }
     }
+
 
     [HttpGet]
     public async Task<IActionResult> GetAllCartItems()

@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Models;
 using Server.Services.InterfacesServices;
@@ -7,21 +9,50 @@ using Server.Services.InterfacesServices;
 public class OrdersController : ControllerBase
 {
     private readonly IOrderService _orderService;
-
-    public OrdersController(IOrderService orderService)
+    private readonly ICartItemService _cartItemService;
+    public OrdersController(IOrderService orderService, ICartItemService cartItemService)
     {
         _orderService = orderService;
+        _cartItemService = cartItemService;
     }
-
     [HttpPost]
-    public async Task<IActionResult> AddOrder([FromBody] Order order)
+    public async Task<IActionResult> AddOrder()
     {
-        if (order == null)
-            return BadRequest();
+        try
+        {
+            IEnumerable<CartItem> cartItems = await _cartItemService.GetAllCartItemsAsync();
 
-        var createdOrder = await _orderService.AddOrderAsync(order);
-        return CreatedAtAction(nameof(GetOrder), new { id = createdOrder.Id }, createdOrder);
+            if (!cartItems.Any())
+            {
+                return BadRequest("No cart items found.");
+            }
+
+            List<OrderItem> orderItems = cartItems.Select(item => new OrderItem
+            {
+                ProductId = item.ProductId,
+                Quantity = item.Quantity
+            }).ToList();
+
+            Order order = new Order
+            {
+                OrderItems = orderItems
+            };
+            var options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve,
+                WriteIndented = true
+            };
+            var createdOrder = await _orderService.AddOrderAsync(order, orderItems);
+            return CreatedAtAction(nameof(GetOrder),
+            new { id = createdOrder.Id },
+            JsonSerializer.Serialize(createdOrder, options));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred while adding the order: {ex.Message}");
+        }
     }
+
 
     [HttpGet]
     public async Task<IActionResult> GetAllOrders()
