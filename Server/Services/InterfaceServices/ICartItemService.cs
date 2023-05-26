@@ -1,12 +1,13 @@
-using Server.Models;
+using Server.Models.Dto;
 
-namespace Server.Services.InterfacesServices;
-
-public interface ICartItemService
+namespace Server.Services.InterfacesServices
 {
-    Task<CartItem> AddCartItemAsync(int id);
-    Task<IEnumerable<CartItem>> GetAllCartItemsAsync();
-    Task<CartItem> GetCartItemByIdAsync(int id);
-    Task<CartItem> UpdateCartItemAsync(CartItem cartItem);
-    Task DeleteCartItemAsync(int id);
+    public interface ICartItemService
+    {
+        Task<CartItemDTO> AddCartItemAsync(int id);
+        Task<IEnumerable<CartItemDTO>> GetAllCartItemsAsync();
+        Task<CartItemDTO> GetCartItemByIdAsync(int id);
+        Task<CartItemDTO> UpdateCartItemAsync(CartItemDTO cartItemDto);
+        Task DeleteCartItemAsync(int id);
+    }
 }

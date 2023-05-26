@@ -1,86 +1,92 @@
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 using Server.Data;
 using Server.Models;
 using Server.Services.InterfacesServices;
+using Server.Models.Dto;
 
-namespace Server.Services;
-
-public class CartItemService : ICartItemService
+namespace Server.Services
 {
-    private readonly ApplicationDbContext _context;
-
-    public CartItemService(ApplicationDbContext context)
+    public class CartItemService : ICartItemService
     {
-        _context = context;
-    }
+        private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-    public async Task<CartItem> AddCartItemAsync(int productId)
-    {
-        var cartItem = new CartItem();
-        var product = await _context.Products.FindAsync(productId);
-
-        if (product == null)
-            throw new ArgumentException("Invalid product ID");
-
-        var existingCartItem = await _context.CartItems.FirstOrDefaultAsync(ci => ci.ProductId == productId);
-
-        if (existingCartItem != null)
+        public CartItemService(ApplicationDbContext context, IMapper mapper)
         {
-            existingCartItem.Quantity += 1;
+            _context = context;
+            _mapper = mapper;
         }
-        else
+
+        public async Task<CartItemDTO> AddCartItemAsync(int productId)
         {
-            cartItem = new CartItem
+            var cartItem = new CartItem();
+            var product = await _context.Products.FindAsync(productId);
+
+            if (product == null)
+                throw new ArgumentException("Invalid product ID");
+
+            var existingCartItem = await _context.CartItems.FirstOrDefaultAsync(ci => ci.ProductId == productId);
+
+            if (existingCartItem != null)
             {
-                ProductId = product.Id,
-                Quantity = 1
-            };
+                existingCartItem.Quantity += 1;
+            }
+            else
+            {
+                cartItem = new CartItem
+                {
+                    ProductId = product.Id,
+                    Quantity = 1
+                };
 
-            await _context.CartItems.AddAsync(cartItem);
+                await _context.CartItems.AddAsync(cartItem);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return _mapper.Map<CartItemDTO>(existingCartItem ?? cartItem);
         }
 
-        await _context.SaveChangesAsync();
+        public async Task<IEnumerable<CartItemDTO>> GetAllCartItemsAsync()
+        {
+            var cartItems = await _context.CartItems.Include(c => c.Product).ThenInclude(p => p.Images).ToListAsync();
+            return _mapper.Map<IEnumerable<CartItemDTO>>(cartItems);
+        }
 
-        return existingCartItem ?? cartItem;
-    }
+        public async Task<CartItemDTO> GetCartItemByIdAsync(int id)
+        {
+            var cartItem = await _context.CartItems.Include(c => c.Product).ThenInclude(p => p.Images).FirstOrDefaultAsync(c => c.Id == id);
 
+            if (cartItem == null)
+                throw new Exception($"No cart item found with ID: {id}");
 
-    public async Task<IEnumerable<CartItem>> GetAllCartItemsAsync()
-    {
-        return await _context.CartItems.Include(c => c.Product).ThenInclude(p => p.Images).ToListAsync();
-    }
+            return _mapper.Map<CartItemDTO>(cartItem);
+        }
 
-    public async Task<CartItem> GetCartItemByIdAsync(int id)
-    {
-        var cartItem = await _context.CartItems.Include(c => c.Product).ThenInclude(p => p.Images).FirstOrDefaultAsync(c => c.Id == id);
+        public async Task<CartItemDTO> UpdateCartItemAsync(CartItemDTO cartItemDto)
+        {
+            var cartItem = _mapper.Map<CartItem>(cartItemDto);
+            var existingCartItem = await _context.CartItems.FindAsync(cartItem.Id);
 
-        if (cartItem == null)
-            throw new Exception($"No cart item found with ID: {id}");
+            if (existingCartItem == null)
+                throw new Exception($"No cart item found with ID: {cartItem.Id}");
 
-        return cartItem;
-    }
+            _context.Entry(existingCartItem).CurrentValues.SetValues(cartItem);
+            await _context.SaveChangesAsync();
 
-    public async Task<CartItem> UpdateCartItemAsync(CartItem cartItem)
-    {
-        var existingCartItem = await _context.CartItems.FindAsync(cartItem.Id);
+            return _mapper.Map<CartItemDTO>(existingCartItem);
+        }
 
-        if (existingCartItem == null)
-            throw new Exception($"No cart item found with ID: {cartItem.Id}");
+        public async Task DeleteCartItemAsync(int id)
+        {
+            var cartItem = await _context.CartItems.FindAsync(id);
 
-        _context.Entry(existingCartItem).CurrentValues.SetValues(cartItem);
-        await _context.SaveChangesAsync();
+            if (cartItem == null)
+                throw new Exception($"No cart item found with ID: {id}");
 
-        return existingCartItem;
-    }
-
-    public async Task DeleteCartItemAsync(int id)
-    {
-        var cartItem = await _context.CartItems.FindAsync(id);
-
-        if (cartItem == null)
-            throw new Exception($"No cart item found with ID: {id}");
-
-        _context.CartItems.Remove(cartItem);
-        await _context.SaveChangesAsync();
+            _context.CartItems.Remove(cartItem);
+            await _context.SaveChangesAsync();
+        }
     }
 }
