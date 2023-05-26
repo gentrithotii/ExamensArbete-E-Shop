@@ -42,8 +42,13 @@ public class ShoppingCartService : IShoppingCartService
         return shoppingCart;
     }
 
-    public async Task AddProductToCartAsync(int productId, int quantity)
+    public async Task AddProductToCartAsync(int productId, int quantity = 1)
     {
+        if (quantity <= 0)
+        {
+            quantity = 1;
+        }
+
         var shoppingCart = await GetCartAsync();
 
         var product = await _context.Products.FindAsync(productId);
@@ -72,9 +77,18 @@ public class ShoppingCartService : IShoppingCartService
     }
 
 
-    public async Task<Order> CreateOrderFromCartAsync()
+
+    public async Task<Order> CreateOrderFromCartAsync(int cartId)
     {
-        var shoppingCart = await GetCartAsync();
+        var shoppingCart = await _context.ShoppingCarts
+            .Include(sc => sc.CartItems)
+                .ThenInclude(ci => ci.Product)
+            .FirstOrDefaultAsync(sc => sc.Id == cartId);
+
+        if (shoppingCart == null)
+        {
+            throw new Exception($"Shopping cart not found with ID: {cartId}");
+        }
 
         if (!shoppingCart.CartItems.Any())
         {
@@ -95,12 +109,14 @@ public class ShoppingCartService : IShoppingCartService
         };
 
         _context.Orders.Add(order);
-        await ClearCartAsync();
 
+        // Clear the specific cart
+        shoppingCart.CartItems.Clear();
         await _context.SaveChangesAsync();
 
         return order;
     }
+
 
     public async Task RemoveProductFromCartAsync(int productId)
     {

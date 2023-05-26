@@ -8,6 +8,6 @@ public interface IShoppingCartService
     Task<ShoppingCart> GetCartAsync();
     Task AddProductToCartAsync(int productId, int quantity);
     Task RemoveProductFromCartAsync(int productId);
-    Task<Order> CreateOrderFromCartAsync();
+    Task<Order> CreateOrderFromCartAsync(int cartId);
     Task ClearCartAsync();
 }
