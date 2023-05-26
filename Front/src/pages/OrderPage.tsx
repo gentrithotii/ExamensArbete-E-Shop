@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { OrderContext } from '../context/OrderContext';
-import React from 'react';
+
 
 const OrderPage = () => {
   const { orders } = useContext(OrderContext);

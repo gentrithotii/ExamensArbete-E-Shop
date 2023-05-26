@@ -34,7 +34,11 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         setOrders(orders);
         setLoading(false);
       } catch (err) {
-        setError(err.message);
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unknown error occurred.');
+        }
         setLoading(false);
       }
     }
@@ -47,10 +51,15 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       setOrders([...orders, order]);
       return order;
     } catch (err) {
-      setError(err.message);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred.');
+      }
       throw err;
     }
   };
+
 
   return (
     <OrderContext.Provider value={{ orders, loading, error, createOrder }}>

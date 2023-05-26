@@ -31,12 +31,18 @@ export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) =>
         setProducts(products);
         setLoading(false);
       } catch (err) {
-        setError(err.message);
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unknown error occurred.');
+        }
         setLoading(false);
       }
-    }
+    };
     fetchProducts();
   }, []);
+
+
 
   return (
     <ProductContext.Provider value={{ products, loading, error }}>

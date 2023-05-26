@@ -4,7 +4,7 @@ import { CartItem } from "../types/cartItem";
 
 export async function getCartItems(): Promise<CartItem[]> {
   try {
-    const response = await axios.get("api/cartitems");
+    const response = await axios.get("/api/cartitems");
     return response.data;
   } catch (error) {
     throw new Error(`Failed to get cart items: ${error}`);

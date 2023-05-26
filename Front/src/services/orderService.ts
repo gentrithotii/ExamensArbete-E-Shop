@@ -3,7 +3,7 @@ import { Order } from "../types/order";
 
 export async function getOrders(): Promise<Order[]> {
   try {
-    const response = await axios.get("api/orders");
+    const response = await axios.get("/api/orders");
     return response.data;
   } catch (error) {
     throw new Error(`Failed to get orders: ${error}`);

@@ -34,13 +34,16 @@ public class ProductService : IProductService
 
     public async Task<Product> GetProductByIdAsync(int id)
     {
-        var product = await _context.Products.FindAsync(id);
+        var product = await _context.Products
+              .Include(p => p.Images)
+                      .FirstOrDefaultAsync(p => p.Id == id);
 
         if (product == null)
             throw new Exception($"No product found with ID: {id}");
 
         return product;
     }
+
 
     public async Task<Product> UpdateProductAsync(Product product)
     {

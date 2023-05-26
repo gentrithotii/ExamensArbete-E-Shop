@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import { CartItem } from "../types/cartItem";
-import * as cartService from '../services/cartService'; 
+import * as cartService from '../services/cartService';
 
 interface CartContextProps {
   cartItems: CartItem[];
@@ -34,7 +34,11 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         setCartItems(items);
         setLoading(false);
       } catch (err) {
-        setError(err.message);
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unknown error occurred.');
+        }
         setLoading(false);
       }
     }
@@ -47,7 +51,11 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       setCartItems([...cartItems, item]);
       return item;
     } catch (err) {
-      setError(err.message);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred.');
+      }
       throw err;
     }
   };
@@ -57,10 +65,16 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       await cartService.removeItemFromCartAsync(itemId);
       setCartItems(cartItems.filter(item => item.id !== itemId));
     } catch (err) {
-      setError(err.message);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred.');
+      }
       throw err;
     }
   };
+
+
 
   return (
     <CartContext.Provider value={{ cartItems, loading, error, addItemToCart, removeItemFromCart }}>
