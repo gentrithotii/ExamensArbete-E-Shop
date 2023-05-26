@@ -163,23 +163,6 @@ namespace Server.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "ShoppingCarts",
-                column: "Id",
-                value: 1);
-
-            migrationBuilder.InsertData(
-                table: "CartItems",
-                columns: new[] { "Id", "ProductId", "Quantity", "ShoppingCartId" },
-                values: new object[,]
-                {
-                    { 1, 1, 1, 1 },
-                    { 2, 2, 2, 1 },
-                    { 3, 3, 3, 1 },
-                    { 4, 4, 4, 1 },
-                    { 5, 5, 5, 1 }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Images",
                 columns: new[] { "Id", "ProductId", "Url" },
                 values: new object[,]

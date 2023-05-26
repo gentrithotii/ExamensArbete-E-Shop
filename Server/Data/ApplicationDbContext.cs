@@ -64,19 +64,6 @@ public class ApplicationDbContext : DbContext
   new Image { Id = 20, Url = "https://images.unsplash.com/photo-1524578339099-e987812bcca1?auto=format&fit=crop&w=1000&q=60", ProductId = 20 }  // Virtual Reality Headset
 );
 
-        modelBuilder.Entity<ShoppingCart>().HasData(
-            new ShoppingCart { Id = 1 }
-        );
-        modelBuilder.Entity<CartItem>().HasData(
-            new CartItem { Id = 1, ProductId = 1, Quantity = 1, ShoppingCartId = 1 },
-            new CartItem { Id = 2, ProductId = 2, Quantity = 2, ShoppingCartId = 1 },
-            new CartItem { Id = 3, ProductId = 3, Quantity = 3, ShoppingCartId = 1 },
-            new CartItem { Id = 4, ProductId = 4, Quantity = 4, ShoppingCartId = 1 },
-            new CartItem { Id = 5, ProductId = 5, Quantity = 5, ShoppingCartId = 1 }
-        );
-
-        // modelBuilder.Entity<ShoppingCart>()
-        //        .Ignore(b => b.TotalPrice);
 
 
     }

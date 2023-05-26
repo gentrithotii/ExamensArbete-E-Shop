@@ -4,8 +4,9 @@ namespace Server.Services.InterfacesServices;
 
 public interface IShoppingCartService
 {
+    Task<ShoppingCart> CreateCartAsync();
     Task<ShoppingCart> GetCartAsync();
-    Task AddProductToCartAsync(Product product, int quantity);
+    Task AddProductToCartAsync(int productId, int quantity);
     Task RemoveProductFromCartAsync(int productId);
     Task<Order> CreateOrderFromCartAsync();
     Task ClearCartAsync();

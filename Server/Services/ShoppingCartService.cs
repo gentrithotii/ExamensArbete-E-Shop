@@ -15,24 +15,44 @@ public class ShoppingCartService : IShoppingCartService
         _context = context;
     }
 
-    public async Task<ShoppingCart> GetCartAsync()
+    public async Task<ShoppingCart> CreateCartAsync()
     {
-        var shoppingCart = await _context.ShoppingCarts
-            .Include(sc => sc.CartItems)
-            .ThenInclude(ci => ci.Product)
-            .FirstOrDefaultAsync();
+        var shoppingCart = new ShoppingCart();
+
+        _context.ShoppingCarts.Add(shoppingCart);
+        await _context.SaveChangesAsync();
 
         return shoppingCart;
     }
 
-    public async Task AddProductToCartAsync(Product product, int quantity)
-    {
-        if (product == null)
-            throw new ArgumentNullException(nameof(product));
 
+    public async Task<ShoppingCart> GetCartAsync()
+    {
+        var shoppingCart = await _context.ShoppingCarts
+            .Include(sc => sc.CartItems)
+                .ThenInclude(ci => ci.Product)
+                    .ThenInclude(p => p.Images)
+            .FirstOrDefaultAsync();
+
+        if (shoppingCart == null)
+        {
+            throw new Exception("No shopping carts exist.");
+        }
+
+        return shoppingCart;
+    }
+
+    public async Task AddProductToCartAsync(int productId, int quantity)
+    {
         var shoppingCart = await GetCartAsync();
 
-        var existingCartItem = shoppingCart.CartItems.FirstOrDefault(ci => ci.Product.Id == product.Id);
+        var product = await _context.Products.FindAsync(productId);
+        if (product == null)
+        {
+            throw new Exception($"Product not found with ID: {productId}");
+        }
+
+        var existingCartItem = shoppingCart.CartItems.FirstOrDefault(ci => ci.Product.Id == productId);
         if (existingCartItem != null)
         {
             existingCartItem.Quantity += quantity;
@@ -41,7 +61,7 @@ public class ShoppingCartService : IShoppingCartService
         {
             var newCartItem = new CartItem
             {
-                ProductId = product.Id,
+                ProductId = productId,
                 Product = product,
                 Quantity = quantity,
             };
@@ -50,6 +70,7 @@ public class ShoppingCartService : IShoppingCartService
 
         await _context.SaveChangesAsync();
     }
+
 
     public async Task<Order> CreateOrderFromCartAsync()
     {
@@ -85,10 +106,17 @@ public class ShoppingCartService : IShoppingCartService
     {
         var shoppingCart = await GetCartAsync();
 
-        var cartItem = shoppingCart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
-        if (cartItem != null)
+        var existingCartItem = shoppingCart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+        if (existingCartItem != null)
         {
-            shoppingCart.CartItems.Remove(cartItem);
+            if (existingCartItem.Quantity > 1)
+            {
+                existingCartItem.Quantity -= 1;
+            }
+            else
+            {
+                shoppingCart.CartItems.Remove(existingCartItem);
+            }
         }
 
         await _context.SaveChangesAsync();

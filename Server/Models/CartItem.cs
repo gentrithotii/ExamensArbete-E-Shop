@@ -9,6 +9,7 @@ public class CartItem
     public Product Product { get; set; }
     public int Quantity { get; set; }
     public int ShoppingCartId { get; set; }
+    [JsonIgnore]
     public decimal TotalPrice => Quantity * Product.Price;
     [JsonIgnore]
     public ShoppingCart ShoppingCart { get; set; }

@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230526130859_InitialCreate")]
+    [Migration("20230526143442_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -42,43 +42,6 @@ namespace Server.Migrations
                     b.HasIndex("ShoppingCartId");
 
                     b.ToTable("CartItems");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ProductId = 1,
-                            Quantity = 1,
-                            ShoppingCartId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ProductId = 2,
-                            Quantity = 2,
-                            ShoppingCartId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ProductId = 3,
-                            Quantity = 3,
-                            ShoppingCartId = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            ProductId = 4,
-                            Quantity = 4,
-                            ShoppingCartId = 1
-                        },
-                        new
-                        {
-                            Id = 5,
-                            ProductId = 5,
-                            Quantity = 5,
-                            ShoppingCartId = 1
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.Image", b =>
@@ -442,12 +405,6 @@ namespace Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ShoppingCarts");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1
-                        });
                 });
 
             modelBuilder.Entity("Server.Models.CartItem", b =>

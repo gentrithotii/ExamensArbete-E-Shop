@@ -10,10 +10,13 @@ namespace Server.Controllers
     public class ShoppingCartController : ControllerBase
     {
         private readonly IShoppingCartService _cartService;
+        private readonly IProductService _productService;
 
-        public ShoppingCartController(IShoppingCartService cartService)
+        public ShoppingCartController(IShoppingCartService cartService, IProductService productService)
         {
             _cartService = cartService;
+            _productService = productService;
+
         }
 
         [HttpGet]
@@ -30,12 +33,42 @@ namespace Server.Controllers
             }
         }
 
-        [HttpPost("add")]
-        public async Task<IActionResult> AddToCart([FromBody] Product product, int quantity)
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateCart()
         {
             try
             {
-                await _cartService.AddProductToCartAsync(product, quantity);
+                var shoppingCart = await _cartService.CreateCartAsync();
+
+                return Ok("Shopping cart created successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while creating the shopping cart: {ex.Message}");
+            }
+        }
+
+
+        [HttpPost("add/{productId}")]
+        public async Task<IActionResult> AddToCart(int productId, [FromBody] int? quantity = null)
+        {
+            try
+            {
+                var product = await _productService.GetProductByIdAsync(productId);
+                if (product == null)
+                {
+                    return NotFound($"Product not found with ID: {productId}");
+                }
+
+                var addQuantity = quantity ?? 1; // Use the provided quantity or default to 1 if null
+
+                if (addQuantity <= 0)
+                {
+                    return BadRequest("Invalid quantity. Quantity must be a positive integer.");
+                }
+
+                await _cartService.AddProductToCartAsync(productId, addQuantity);
+
                 return Ok("Product added to the cart successfully.");
             }
             catch (Exception ex)
@@ -43,6 +76,11 @@ namespace Server.Controllers
                 return StatusCode(500, $"An error occurred while adding the product to the cart: {ex.Message}");
             }
         }
+
+
+
+
+
 
         [HttpDelete("remove/{productId}")]
         public async Task<IActionResult> RemoveFromCart(int productId)
