@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Models;
+using Server.Models.Dto;
 using Server.Services.InterfacesServices;
 
 [ApiController]
@@ -9,13 +10,12 @@ using Server.Services.InterfacesServices;
 public class OrdersController : ControllerBase
 {
     private readonly IOrderService _orderService;
-    private readonly ICartItemService _cartItemService;
+
     private readonly IShoppingCartService _shoppingCartService;
 
-    public OrdersController(IOrderService orderService, ICartItemService cartItemService, IShoppingCartService shoppingCartService)
+    public OrdersController(IOrderService orderService, IShoppingCartService shoppingCartService)
     {
         _orderService = orderService;
-        _cartItemService = cartItemService;
         _shoppingCartService = shoppingCartService;
     }
 
@@ -24,7 +24,7 @@ public class OrdersController : ControllerBase
     {
         try
         {
-            var order = await _shoppingCartService.CreateOrderFromCartAsync(cartId);
+            var order = await _orderService.CreateOrderFromCartAsync(cartId);
 
             var options = new JsonSerializerOptions
             {
@@ -63,14 +63,14 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateOrder(int id, [FromBody] Order order)
+    public async Task<IActionResult> UpdateOrder(int id, [FromBody] OrderDTO orderDto)
     {
-        if (id != order.Id)
+        if (id != orderDto.Id)
             return BadRequest();
 
         try
         {
-            var updatedOrder = await _orderService.UpdateOrderAsync(order);
+            var updatedOrder = await _orderService.UpdateOrderAsync(orderDto);
             return Ok(updatedOrder);
         }
         catch (Exception e)
@@ -78,6 +78,7 @@ public class OrdersController : ControllerBase
             return NotFound(e.Message);
         }
     }
+
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteOrder(int id)

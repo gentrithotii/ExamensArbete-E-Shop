@@ -76,48 +76,6 @@ public class ShoppingCartService : IShoppingCartService
         await _context.SaveChangesAsync();
     }
 
-
-
-    public async Task<Order> CreateOrderFromCartAsync(int cartId)
-    {
-        var shoppingCart = await _context.ShoppingCarts
-            .Include(sc => sc.CartItems)
-                .ThenInclude(ci => ci.Product)
-            .FirstOrDefaultAsync(sc => sc.Id == cartId);
-
-        if (shoppingCart == null)
-        {
-            throw new Exception($"Shopping cart not found with ID: {cartId}");
-        }
-
-        if (!shoppingCart.CartItems.Any())
-        {
-            throw new Exception("Shopping cart is empty");
-        }
-
-        var orderItems = shoppingCart.CartItems.Select(ci => new OrderItem
-        {
-            ProductId = ci.ProductId,
-            Quantity = ci.Quantity,
-            Price = ci.Product.Price
-        }).ToList();
-
-        var order = new Order
-        {
-            OrderItems = orderItems,
-            TotalPrice = shoppingCart.TotalPrice
-        };
-
-        _context.Orders.Add(order);
-
-        // Clear the specific cart
-        shoppingCart.CartItems.Clear();
-        await _context.SaveChangesAsync();
-
-        return order;
-    }
-
-
     public async Task RemoveProductFromCartAsync(int productId)
     {
         var shoppingCart = await GetCartAsync();

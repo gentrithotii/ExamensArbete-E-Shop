@@ -1,93 +1,144 @@
-using System.Text.Json;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.Models;
 using Server.Services.InterfacesServices;
+using Server.Models.Dto;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Server.Services;
-
-public class OrderService : IOrderService
+namespace Server.Services
 {
-    private readonly ApplicationDbContext _context;
-
-    public OrderService(ApplicationDbContext context)
+    public class OrderService : IOrderService
     {
-        _context = context;
-    }
+        private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-    public async Task<Order> AddOrderAsync(Order order, IEnumerable<OrderItem> orderItems)
-    {
-        if (order == null)
+        public OrderService(ApplicationDbContext context, IMapper mapper)
         {
-            throw new ArgumentNullException(nameof(order));
+            _context = context;
+            _mapper = mapper;
         }
 
-        if (orderItems == null)
+        public async Task<OrderDTO> AddOrderAsync(OrderDTO orderDto, IEnumerable<OrderItemDTO> orderItemDtos)
         {
-            throw new ArgumentNullException(nameof(orderItems));
-        }
+            var order = _mapper.Map<Order>(orderDto);
+            var orderItems = _mapper.Map<List<OrderItem>>(orderItemDtos);
 
-        foreach (var item in orderItems)
-        {
-            var product = await _context.Products.FindAsync(item.ProductId);
-            if (product == null)
+            if (order == null)
             {
-                throw new Exception($"Product with id: {item.ProductId} not found.");
+                throw new ArgumentNullException(nameof(order));
             }
 
-            item.Product = product;
-            order.OrderItems.Add(item);
-            order.TotalPrice += item.Quantity * product.Price;
+            if (orderItems == null)
+            {
+                throw new ArgumentNullException(nameof(orderItems));
+            }
+
+            foreach (var item in orderItems)
+            {
+                var product = await _context.Products.FindAsync(item.ProductId);
+                if (product == null)
+                {
+                    throw new Exception($"Product with id: {item.ProductId} not found.");
+                }
+
+                item.Product = product;
+                order.OrderItems.Add(item);
+                order.TotalPrice += item.Quantity * product.Price;
+            }
+
+            var orderEntity = await _context.Orders.AddAsync(order);
+            await _context.SaveChangesAsync();
+
+            var cartItemsToDelete = _context.CartItems.Where(c => orderItems.Select(oi => oi.ProductId).Contains(c.ProductId));
+            _context.CartItems.RemoveRange(cartItemsToDelete);
+            await _context.SaveChangesAsync();
+
+            return _mapper.Map<OrderDTO>(orderEntity.Entity);
         }
 
-        await _context.Orders.AddAsync(order);
-        await _context.SaveChangesAsync();
+        public async Task<IEnumerable<OrderDTO>> GetAllOrdersAsync()
+        {
+            var orders = await _context.Orders.Include(o => o.OrderItems).ThenInclude(oi => oi.Product).ToListAsync();
+            return _mapper.Map<IEnumerable<OrderDTO>>(orders);
+        }
 
-        var cartItemsToDelete = _context.CartItems.Where(c => orderItems.Select(oi => oi.ProductId).Contains(c.ProductId));
-        _context.CartItems.RemoveRange(cartItemsToDelete);
-        await _context.SaveChangesAsync();
+        public async Task<OrderDTO> GetOrderByIdAsync(int id)
+        {
+            var order = await _context.Orders.Include(o => o.OrderItems).ThenInclude(oi => oi.Product).FirstOrDefaultAsync(o => o.Id == id);
 
-        return order;
-    }
+            if (order == null)
+                throw new Exception($"No order found with ID: {id}");
 
+            return _mapper.Map<OrderDTO>(order);
+        }
 
+        public async Task<OrderDTO> UpdateOrderAsync(OrderDTO orderDto)
+        {
+            var order = _mapper.Map<Order>(orderDto);
+            var existingOrder = await _context.Orders.FindAsync(order.Id);
 
-    public async Task<IEnumerable<Order>> GetAllOrdersAsync()
-    {
-        return await _context.Orders.Include(o => o.OrderItems).ThenInclude(oi => oi.Product).ToListAsync();
-    }
+            if (existingOrder == null)
+                throw new Exception($"No order found with ID: {order.Id}");
 
-    public async Task<Order> GetOrderByIdAsync(int id)
-    {
-        var order = await _context.Orders.Include(o => o.OrderItems).ThenInclude(oi => oi.Product).FirstOrDefaultAsync(o => o.Id == id);
+            _context.Entry(existingOrder).CurrentValues.SetValues(order);
+            await _context.SaveChangesAsync();
 
-        if (order == null)
-            throw new Exception($"No order found with ID: {id}");
+            return _mapper.Map<OrderDTO>(existingOrder);
+        }
 
-        return order;
-    }
+        public async Task DeleteOrderAsync(int id)
+        {
+            var order = await _context.Orders.FindAsync(id);
 
-    public async Task<Order> UpdateOrderAsync(Order order)
-    {
-        var existingOrder = await _context.Orders.FindAsync(order.Id);
+            if (order == null)
+                throw new Exception($"No order found with ID: {id}");
 
-        if (existingOrder == null)
-            throw new Exception($"No order found with ID: {order.Id}");
+            _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
+        }
 
-        _context.Entry(existingOrder).CurrentValues.SetValues(order);
-        await _context.SaveChangesAsync();
+        public async Task<OrderDTO> CreateOrderFromCartAsync(int cartId)
+        {
+            var shoppingCart = await _context.ShoppingCarts
+                .Include(sc => sc.CartItems)
+                    .ThenInclude(ci => ci.Product)
+                .FirstOrDefaultAsync(sc => sc.Id == cartId);
 
-        return existingOrder;
-    }
+            if (shoppingCart == null)
+            {
+                throw new Exception($"Shopping cart not found with ID: {cartId}");
+            }
 
-    public async Task DeleteOrderAsync(int id)
-    {
-        var order = await _context.Orders.FindAsync(id);
+            if (!shoppingCart.CartItems.Any())
+            {
+                throw new Exception("Shopping cart is empty");
+            }
 
-        if (order == null)
-            throw new Exception($"No order found with ID: {id}");
+            var orderItems = shoppingCart.CartItems.Select(ci => new OrderItem
+            {
+                ProductId = ci.ProductId,
+                Quantity = ci.Quantity,
+                Price = ci.Product.Price
+            }).ToList();
 
-        _context.Orders.Remove(order);
-        await _context.SaveChangesAsync();
+            var order = new Order
+            {
+                OrderItems = orderItems,
+                OrderDate = DateTime.Now,
+                TotalPrice = shoppingCart.TotalPrice
+            };
+
+            _context.Orders.Add(order);
+
+            // Clear cart
+            shoppingCart.CartItems.Clear();
+            await _context.SaveChangesAsync();
+
+            return _mapper.Map<OrderDTO>(order);
+        }
     }
 }

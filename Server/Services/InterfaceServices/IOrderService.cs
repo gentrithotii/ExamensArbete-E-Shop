@@ -1,13 +1,14 @@
-using System.Text.Json;
-using Server.Models;
+using Server.Models.Dto;
 
-namespace Server.Services.InterfacesServices;
-
-public interface IOrderService
+namespace Server.Services.InterfacesServices
 {
-    Task<Order> AddOrderAsync(Order order, IEnumerable<OrderItem> orderItems);
-    Task<IEnumerable<Order>> GetAllOrdersAsync();
-    Task<Order> GetOrderByIdAsync(int id);
-    Task<Order> UpdateOrderAsync(Order order);
-    Task DeleteOrderAsync(int id);
+    public interface IOrderService
+    {
+        Task<OrderDTO> AddOrderAsync(OrderDTO orderDto, IEnumerable<OrderItemDTO> orderItemDtos);
+        Task<OrderDTO> CreateOrderFromCartAsync(int cartId);
+        Task<IEnumerable<OrderDTO>> GetAllOrdersAsync();
+        Task<OrderDTO> GetOrderByIdAsync(int id);
+        Task<OrderDTO> UpdateOrderAsync(OrderDTO orderDto);
+        Task DeleteOrderAsync(int id);
+    }
 }
