@@ -10,48 +10,51 @@ public class OrdersController : ControllerBase
 {
     private readonly IOrderService _orderService;
     private readonly ICartItemService _cartItemService;
-    public OrdersController(IOrderService orderService, ICartItemService cartItemService)
+    private readonly IShoppingCartService _shoppingCartService;
+    public OrdersController(IOrderService orderService, ICartItemService cartItemService, IShoppingCartService shoppingCartService)
     {
         _orderService = orderService;
         _cartItemService = cartItemService;
+        _shoppingCartService = shoppingCartService;
+
     }
-    [HttpPost]
-    public async Task<IActionResult> AddOrder()
-    {
-        try
-        {
-            IEnumerable<CartItem> cartItems = await _cartItemService.GetAllCartItemsAsync();
+    // [HttpPost]
+    // public async Task<IActionResult> AddOrder()
+    // {
+    //     try
+    //     {
+    //         IEnumerable<CartItem> cartItems = await _cartItemService.GetAllCartItemsAsync();
 
-            if (!cartItems.Any())
-            {
-                return BadRequest("No cart items found.");
-            }
+    //         if (!cartItems.Any())
+    //         {
+    //             return BadRequest("No cart items found.");
+    //         }
 
-            List<OrderItem> orderItems = cartItems.Select(item => new OrderItem
-            {
-                ProductId = item.ProductId,
-                Quantity = item.Quantity
-            }).ToList();
+    //         List<OrderItem> orderItems = cartItems.Select(item => new OrderItem
+    //         {
+    //             ProductId = item.ProductId,
+    //             Quantity = item.Quantity
+    //         }).ToList();
 
-            Order order = new Order
-            {
-                OrderItems = orderItems
-            };
-            var options = new JsonSerializerOptions
-            {
-                ReferenceHandler = ReferenceHandler.Preserve,
-                WriteIndented = true
-            };
-            var createdOrder = await _orderService.AddOrderAsync(order, orderItems);
-            return CreatedAtAction(nameof(GetOrder),
-            new { id = createdOrder.Id },
-            JsonSerializer.Serialize(createdOrder, options));
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"An error occurred while adding the order: {ex.Message}");
-        }
-    }
+    //         Order order = new Order
+    //         {
+    //             OrderItems = orderItems
+    //         };
+    //         var options = new JsonSerializerOptions
+    //         {
+    //             ReferenceHandler = ReferenceHandler.Preserve,
+    //             WriteIndented = true
+    //         };
+    //         var createdOrder = await _orderService.AddOrderAsync(order, orderItems);
+    //         return CreatedAtAction(nameof(GetOrder),
+    //         new { id = createdOrder.Id },
+    //         JsonSerializer.Serialize(createdOrder, options));
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return StatusCode(500, $"An error occurred while adding the order: {ex.Message}");
+    //     }
+    // }
 
 
     [HttpGet]
@@ -72,6 +75,28 @@ public class OrdersController : ControllerBase
         catch (Exception e)
         {
             return NotFound(e.Message);
+        }
+    }
+    [HttpPost]
+    public async Task<IActionResult> AddOrder()
+    {
+        try
+        {
+            var order = await _shoppingCartService.CreateOrderFromCartAsync();
+            var createdOrder = await _orderService.AddOrderAsync(order, order.OrderItems);
+
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+
+            return CreatedAtAction(nameof(GetOrder),
+                new { id = createdOrder.Id },
+                JsonSerializer.Serialize(createdOrder, options));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred while adding the order: {ex.Message}");
         }
     }
 

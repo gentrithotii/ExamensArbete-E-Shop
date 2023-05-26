@@ -11,7 +11,7 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230525195526_InitialCreate")]
+    [Migration("20230526130859_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -32,9 +32,14 @@ namespace Server.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("ShoppingCartId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("ShoppingCartId");
 
                     b.ToTable("CartItems");
 
@@ -43,31 +48,36 @@ namespace Server.Migrations
                         {
                             Id = 1,
                             ProductId = 1,
-                            Quantity = 1
+                            Quantity = 1,
+                            ShoppingCartId = 1
                         },
                         new
                         {
                             Id = 2,
                             ProductId = 2,
-                            Quantity = 2
+                            Quantity = 2,
+                            ShoppingCartId = 1
                         },
                         new
                         {
                             Id = 3,
                             ProductId = 3,
-                            Quantity = 3
+                            Quantity = 3,
+                            ShoppingCartId = 1
                         },
                         new
                         {
                             Id = 4,
                             ProductId = 4,
-                            Quantity = 4
+                            Quantity = 4,
+                            ShoppingCartId = 1
                         },
                         new
                         {
                             Id = 5,
                             ProductId = 5,
-                            Quantity = 5
+                            Quantity = 5,
+                            ShoppingCartId = 1
                         });
                 });
 
@@ -238,6 +248,12 @@ namespace Server.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("OrderItemId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("INTEGER");
 
@@ -247,6 +263,8 @@ namespace Server.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
+
+                    b.HasIndex("OrderItemId");
 
                     b.HasIndex("ProductId");
 
@@ -415,6 +433,23 @@ namespace Server.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ShoppingCart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ShoppingCarts");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1
+                        });
+                });
+
             modelBuilder.Entity("Server.Models.CartItem", b =>
                 {
                     b.HasOne("Server.Models.Product", "Product")
@@ -423,7 +458,15 @@ namespace Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ShoppingCart", "ShoppingCart")
+                        .WithMany("CartItems")
+                        .HasForeignKey("ShoppingCartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Product");
+
+                    b.Navigation("ShoppingCart");
                 });
 
             modelBuilder.Entity("Server.Models.Image", b =>
@@ -445,6 +488,10 @@ namespace Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Server.Models.OrderItem", null)
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderItemId");
+
                     b.HasOne("Server.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
@@ -461,9 +508,19 @@ namespace Server.Migrations
                     b.Navigation("OrderItems");
                 });
 
+            modelBuilder.Entity("Server.Models.OrderItem", b =>
+                {
+                    b.Navigation("OrderItems");
+                });
+
             modelBuilder.Entity("Server.Models.Product", b =>
                 {
                     b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("ShoppingCart", b =>
+                {
+                    b.Navigation("CartItems");
                 });
 #pragma warning restore 612, 618
         }

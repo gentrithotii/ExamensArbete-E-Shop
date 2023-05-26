@@ -35,6 +35,8 @@ public class OrderService : IOrderService
                 throw new Exception($"Product with id: {item.ProductId} not found.");
             }
 
+            item.Product = product;
+            order.OrderItems.Add(item);
             order.TotalPrice += item.Quantity * product.Price;
         }
 
@@ -47,6 +49,7 @@ public class OrderService : IOrderService
 
         return order;
     }
+
 
 
     public async Task<IEnumerable<Order>> GetAllOrdersAsync()
