@@ -42,13 +42,8 @@ public class ShoppingCartService : IShoppingCartService
         return shoppingCart;
     }
 
-    public async Task AddProductToCartAsync(int productId, int quantity = 1)
+    public async Task AddProductToCartAsync(int productId)
     {
-        if (quantity <= 0)
-        {
-            quantity = 1;
-        }
-
         var shoppingCart = await GetCartAsync();
 
         var product = await _context.Products.FindAsync(productId);
@@ -60,7 +55,7 @@ public class ShoppingCartService : IShoppingCartService
         var existingCartItem = shoppingCart.CartItems.FirstOrDefault(ci => ci.Product.Id == productId);
         if (existingCartItem != null)
         {
-            existingCartItem.Quantity += quantity;
+            existingCartItem.Quantity += 1; // Increment quantity by 1
         }
         else
         {
@@ -68,7 +63,7 @@ public class ShoppingCartService : IShoppingCartService
             {
                 ProductId = productId,
                 Product = product,
-                Quantity = quantity,
+                Quantity = 1, // Set initial quantity to 1
             };
             shoppingCart.CartItems.Add(newCartItem);
         }

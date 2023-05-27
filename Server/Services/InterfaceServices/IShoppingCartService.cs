@@ -6,7 +6,7 @@ public interface IShoppingCartService
 {
     Task<ShoppingCart> CreateCartAsync();
     Task<ShoppingCart> GetCartAsync();
-    Task AddProductToCartAsync(int productId, int quantity);
+    Task AddProductToCartAsync(int productId);
     Task RemoveProductFromCartAsync(int productId);
     Task ClearCartAsync();
 }

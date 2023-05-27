@@ -3,11 +3,14 @@ import { useParams } from 'react-router-dom';
 import { ProductContext } from '../context/ProductContext';
 import { Product } from '../types/product';
 import { getProductsWithId } from '../services/productService';
+import { addProductToCart } from '../services/cartService';
+
 
 const ProductDetailPage = () => {
     const { id = '' } = useParams<{ id?: string }>();
     const { products } = useContext(ProductContext);
     const [product, setProduct] = useState<Product | null>(null);
+
 
     useEffect(() => {
         const getProduct = async () => {
@@ -51,14 +54,14 @@ const ProductDetailPage = () => {
                         <h2 className="sr-only">Product information</h2>
                         <p className="text-3xl tracking-tight text-gray-900">${product.price}</p>
 
-                        <form className="mt-10">
+                        <div className="mt-10">
                             <button
-                                type="submit"
                                 className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                onClick={() => addProductToCart(parseInt(id))}
                             >
                                 Add to bag
                             </button>
-                        </form>
+                        </div>
                     </div>
 
                     <div className="py-10 lg:col-span-2 lg:col-start-1 lg:border-r lg:border-gray-200 lg:pb-16 lg:pr-8 lg:pt-6">

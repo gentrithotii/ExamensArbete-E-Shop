@@ -1,30 +1,24 @@
-// cartService.ts
-import axios from 'axios';
-import { CartItem } from "../types/cartItem";
+// shoppingCartService.ts
 
-export async function getCartItems(): Promise<CartItem[]> {
+import axios from "axios";
+import { ShoppingCart } from "../types/shoppingCart";
+
+export async function getShoppingCart(): Promise<ShoppingCart> {
+   try {
+    const response = await axios.get("/api/ShoppingCart");
+ return response.data;
+     } catch (error) {
+    throw new Error(`Failed to get orders: ${error}`);
+  }
+}
+
+export async function addProductToCart(id: number) {
   try {
-    const response = await axios.get("/api/cartitems");
+    const response = await axios.post(`/api/ShoppingCart/add/${id}`);
+    console.log(response.data);
     return response.data;
   } catch (error) {
-    throw new Error(`Failed to get cart items: ${error}`);
+    console.error(`Error adding product to cart: ${error}`);
+    throw error;
   }
 }
-
-export async function addItemToCartAsync(newItem: CartItem): Promise<CartItem> {
-  try {
-    const response = await axios.post("api/cartitems", newItem);
-    return response.data;
-  } catch (error) {
-    throw new Error(`Failed to add item to cart: ${error}`);
-  }
-}
-
-export async function removeItemFromCartAsync(itemId: number): Promise<void> {
-  try {
-    await axios.delete(`api/cartitems/${itemId}`);
-  } catch (error) {
-    throw new Error(`Failed to remove item from cart: ${error}`);
-  }
-}
-

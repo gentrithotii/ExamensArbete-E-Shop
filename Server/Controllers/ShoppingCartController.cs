@@ -50,7 +50,7 @@ namespace Server.Controllers
 
 
         [HttpPost("add/{productId}")]
-        public async Task<IActionResult> AddToCart(int productId, [FromBody] int? quantity = null)
+        public async Task<IActionResult> AddToCart(int productId)
         {
             try
             {
@@ -60,14 +60,7 @@ namespace Server.Controllers
                     return NotFound($"Product not found with ID: {productId}");
                 }
 
-                var addQuantity = quantity ?? 1; // Use the provided quantity or default to 1 if null
-
-                if (addQuantity <= 0)
-                {
-                    return BadRequest("Invalid quantity. Quantity must be a positive integer.");
-                }
-
-                await _cartService.AddProductToCartAsync(productId, addQuantity);
+                await _cartService.AddProductToCartAsync(productId);
 
                 return Ok("Product added to the cart successfully.");
             }
