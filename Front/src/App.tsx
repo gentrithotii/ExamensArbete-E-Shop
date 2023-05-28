@@ -18,10 +18,10 @@ function App() {
             <ShopHeader />
             <Routes>
               <Route path="/" element={<ProductPage />} />
-              <Route path="/products/:id" element={<ProductDetailPage />} />
               <Route path="/cart" element={<CartPage onClose={function (): void {
                 throw new Error("Function not implemented.");
               }} />} />
+              <Route path="/products/:id" element={<ProductDetailPage />} />
               <Route path="/orders" element={<OrderPage />} />
             </Routes>
           </OrderProvider>
