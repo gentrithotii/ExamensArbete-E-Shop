@@ -74,7 +74,7 @@ const ProductDetailPage = () => {
                     {/* Price and Add to bag button */}
                     <div className="mt-4 lg:row-span-3 lg:mt-0">
                         <h2 className="sr-only">Product information</h2>
-                        <p className="text-3xl tracking-tight text-gray-900">Total Price: {product.price}</p>
+                        <p className="text-3xl tracking-tight text-gray-900">Total Price: {product.price} $</p>
                         <button
                             onClick={addProduct}
                             className="mt-4 flex w-1/2 items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
