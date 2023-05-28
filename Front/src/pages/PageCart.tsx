@@ -23,18 +23,18 @@ const PageCart: FunctionComponent<PageCartProps> = ({ onClose }) => {
 
   return (
     <Transition.Root show={shoppingCart !== null} as={Fragment}>
-      <Dialog as="div" className="fixed inset-0 overflow-hidden" onClose={handleClose}>
-        <div className="absolute inset-0 overflow-hidden">
+      <Dialog as="div" className="fixed inset-0" onClose={handleClose}>
+        <div className="absolute inset-0">
           <Transition.Child
             as={Fragment}
-            enter="transition-opacity duration-500 sm:duration-700"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="transition-opacity duration-500 sm:duration-700"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
+            enter="transition-all duration-300"
+            enterFrom="transform translate-x-full"
+            enterTo="transform translate-x-0"
+            leave="transition-all duration-300"
+            leaveFrom="transform translate-x-0"
+            leaveTo="transform translate-x-full"
           >
-            <Dialog.Panel className="pointer-events-auto w-screen max-w-md h-full transform right-0">
+            <Dialog.Panel className="fixed top-0 right-0 h-full max-w-md w-full">
               <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
                 <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                   <div className="flex items-start justify-between">
