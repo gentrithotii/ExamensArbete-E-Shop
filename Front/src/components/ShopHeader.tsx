@@ -15,7 +15,7 @@ const ShopHeader = () => {
   }
 
   return (
-    <header className="fixed top-0 z-50 w-full bg-white">
+    <header className="fixed top-0 z-40 w-full bg-white">
       <nav aria-label="Top" className="mx-auto w-full px-4">
         <div className="border-b border-gray-200">
           <div className="flex h-16 items-center">

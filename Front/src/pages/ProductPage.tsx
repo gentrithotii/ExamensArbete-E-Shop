@@ -1,26 +1,31 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { ProductContext } from '../context/ProductContext';
 import { Link } from 'react-router-dom';
+import { Product } from '../types/product';
 
 const ProductPage = () => {
   const { products } = useContext(ProductContext);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredProducts, setFilteredProducts] = useState(products);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
+  useEffect(() => {
+    const formattedQuery = searchQuery.toLowerCase().replace(/[.,;'[\]]/g, '').trim();
+    const filtered = products.filter((product) => {
+      const productName = product.name.toLowerCase().replace(/[.,;'[\]]/g, '');
+      const words = formattedQuery.split(' ');
+      return words.every((word) => productName.includes(word));
+    });
+    setFilteredProducts(filtered);
+  }, [products, searchQuery]);
 
-  const handleSearchChange = (e: { target: { value: string; }; }) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
-
-    const filtered = products.filter((product) =>
-      product.name.toLowerCase().includes(query.toLowerCase())
-    );
-    setFilteredProducts(filtered);
   };
 
   return (
     <div className="pt-16">
-      {/* Search input */}
+      {/* Search  */}
       <div className="max-w-2xl mx-auto px-4 py-6 sm:px-6">
         <input
           type="text"
@@ -31,21 +36,21 @@ const ProductPage = () => {
         />
       </div>
 
-      {/* Product list */}
+      {/* Product  */}
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
           {filteredProducts.map((product, index) => (
             <div key={index} className="group relative">
-              {/* Product image */}
+              {/* Product  */}
               <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
                 <img
-                  src={product.images[0].url}
+                  src={product.images[0]?.url}
                   alt={product.name}
                   className="h-full w-full object-cover object-center lg:h-full lg:w-full"
                 />
               </div>
               <div className="mt-4 flex justify-between">
-                {/* Product name */}
+                {/* Product  */}
                 <div>
                   <h3 className="text-sm text-gray-700">
                     <Link to={`/products/${product.id}`}>
@@ -54,7 +59,7 @@ const ProductPage = () => {
                     </Link>
                   </h3>
                 </div>
-                {/* Product price */}
+                {/* Product */}
                 <p className="text-sm font-medium text-gray-900">${product.price}</p>
               </div>
             </div>

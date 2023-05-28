@@ -23,7 +23,7 @@ const PageCart: FunctionComponent<PageCartProps> = ({ onClose }) => {
 
   return (
     <Transition.Root show={shoppingCart !== null} as={Fragment}>
-      <Dialog as="div" className="fixed inset-0" onClose={handleClose}>
+      <Dialog as="div" className="fixed inset-0 z-50" onClose={handleClose}>
         <div className="absolute inset-0">
           <Transition.Child
             as={Fragment}
@@ -75,7 +75,7 @@ const PageCart: FunctionComponent<PageCartProps> = ({ onClose }) => {
                               </div>
                               <div className="flex flex-1 items-end justify-between text-sm">
                                 <p className="text-gray-500">Qty {cartItem.quantity}</p>
-
+                                <p className="text-gray-500">Qty price {cartItem.quantityPrice}</p>
                                 <div className="flex">
                                   <button
                                     type="button"
