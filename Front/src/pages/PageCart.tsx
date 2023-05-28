@@ -3,16 +3,14 @@ import { ShoppingCartContext } from '../context/ShoppingCartContext';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
-interface PageCartProps {
-  onClose: () => void;
-}
 
-const PageCart: FunctionComponent<PageCartProps> = ({ onClose }) => {
-  const { shoppingCart, removeProductFromCart } = useContext(ShoppingCartContext);
 
-  const handleClose = () => {
-    onClose();
-  };
+const PageCart: FunctionComponent = () => {
+  const { shoppingCart, removeProductFromCart, closeCart, isCartOpen } = useContext(ShoppingCartContext);
+
+  // const handleClose = () => {
+  //   onClose();
+  // };
 
   const removeProduct = (id: number) => {
     if (id) {
@@ -22,8 +20,8 @@ const PageCart: FunctionComponent<PageCartProps> = ({ onClose }) => {
 
 
   return (
-    <Transition.Root show={shoppingCart !== null} as={Fragment}>
-      <Dialog as="div" className="fixed inset-0 z-50" onClose={handleClose}>
+    <Transition.Root show={isCartOpen} as={Fragment}>
+      <Dialog as="div" className="fixed inset-0 z-50" onClose={closeCart}>
         <div className="absolute inset-0">
           <Transition.Child
             as={Fragment}
@@ -43,7 +41,7 @@ const PageCart: FunctionComponent<PageCartProps> = ({ onClose }) => {
                       <button
                         type="button"
                         className="-m-2 p-2 text-gray-400 hover:text-gray-500"
-                        onClick={handleClose}
+                        onClick={closeCart}
                       >
                         <span className="sr-only">Close panel</span>
                         <XMarkIcon className="h-6 w-6" aria-hidden="true" />
@@ -114,7 +112,7 @@ const PageCart: FunctionComponent<PageCartProps> = ({ onClose }) => {
                       <button
                         type="button"
                         className="font-medium text-indigo-600 hover:text-indigo-500"
-                        onClick={handleClose}
+                        onClick={closeCart}
                       >
                         Continue Shopping
                         <span aria-hidden="true"> &rarr;</span>

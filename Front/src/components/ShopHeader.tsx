@@ -5,7 +5,10 @@ import { ShoppingCartContext } from "../context/ShoppingCartContext";
 import PageCart from "../pages/PageCart";
 
 const ShopHeader = () => {
-  const { isCartOpen, closeCart, openCart, shoppingCart } = useContext(ShoppingCartContext);
+  const { isCartOpen, openCart, shoppingCart } = useContext(ShoppingCartContext);
+
+
+
 
   let cartItemsCount = 0;
   if (shoppingCart) {
@@ -69,7 +72,7 @@ const ShopHeader = () => {
             </div>
           </div>
         </div>
-        {isCartOpen && <PageCart onClose={closeCart} />}
+        {isCartOpen && <PageCart />}
       </nav>
     </header>
   );
