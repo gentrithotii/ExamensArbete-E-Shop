@@ -3,14 +3,14 @@ import { useParams } from 'react-router-dom';
 import { ProductContext } from '../context/ProductContext';
 import { Product } from '../types/product';
 import { getProductsWithId } from '../services/productService';
-import { addProductToCart } from '../services/cartService';
+import { ShoppingCartContext } from '../context/ShoppingCartContext';
 
 
 const ProductDetailPage = () => {
     const { id = '' } = useParams<{ id?: string }>();
     const { products } = useContext(ProductContext);
     const [product, setProduct] = useState<Product | null>(null);
-
+    const { addProductToCart } = useContext(ShoppingCartContext);
 
     useEffect(() => {
         const getProduct = async () => {
@@ -23,6 +23,12 @@ const ProductDetailPage = () => {
         getProduct();
     }, [id, products]);
 
+    const addProduct = () => {
+
+        if (id) {
+            addProductToCart(parseInt(id));
+        }
+    };
 
     if (!product) {
         return <div>Product not found</div>;
@@ -57,7 +63,7 @@ const ProductDetailPage = () => {
                         <div className="mt-10">
                             <button
                                 className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                onClick={() => addProductToCart(parseInt(id))}
+                                onClick={() => addProduct()}
                             >
                                 Add to bag
                             </button>

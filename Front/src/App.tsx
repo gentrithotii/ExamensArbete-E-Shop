@@ -17,7 +17,9 @@ function App() {
             <Routes>
               <Route path="/" element={<ProductPage />} />
               <Route path="/products/:id" element={<ProductDetailPage />} />
-              <Route path="/cart" element={<CartPage />} />
+              <Route path="/cart" element={<CartPage onClose={function (): void {
+                throw new Error("Function not implemented.");
+              }} />} />
               <Route path="/orders" element={<OrderPage />} />
             </Routes>
           </OrderProvider>

@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { ProductContext } from '../context/ProductContext';
 import { Link } from 'react-router-dom';
-import PageCart from './PageCart'; // make sure to import the PageCart component
+import PageCart from './PageCart';
 
 const ProductPage = () => {
   const { products } = useContext(ProductContext);
@@ -23,10 +23,10 @@ const ProductPage = () => {
                 <div className="mt-4 flex justify-between">
                   <div>
                     <h3 className="text-sm text-gray-700">
-                      <a href="#">
+                      {/* <a href="#">
                         <span aria-hidden="true" className="absolute inset-0"></span>
                         {product.name}
-                      </a>
+                      </a> */}
                       <Link to={`/products/${product.id}`}>
                         <span aria-hidden="true" className="absolute inset-0"></span>
                         {product.name}

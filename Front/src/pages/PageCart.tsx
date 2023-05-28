@@ -8,11 +8,18 @@ interface PageCartProps {
 }
 
 const PageCart: FunctionComponent<PageCartProps> = ({ onClose }) => {
-  const { shoppingCart } = useContext(ShoppingCartContext);
+  const { shoppingCart, removeProductFromCart } = useContext(ShoppingCartContext);
 
   const handleClose = () => {
     onClose();
   };
+
+  const removeProduct = (id: number) => {
+    if (id) {
+      removeProductFromCart(id);
+    }
+  }
+
 
   return (
     <Transition.Root show={shoppingCart !== null} as={Fragment}>
@@ -73,7 +80,7 @@ const PageCart: FunctionComponent<PageCartProps> = ({ onClose }) => {
                                   <button
                                     type="button"
                                     className="font-medium text-indigo-600 hover:text-indigo-500"
-                                    onClick={() => console.log(cartItem.product.id)}
+                                    onClick={() => removeProduct(cartItem.productId)}
                                   >
                                     Remove
                                   </button>

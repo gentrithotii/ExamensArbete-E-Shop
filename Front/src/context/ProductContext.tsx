@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useEffect } from "react";
 import { Product } from "../types/product";
 import { getProducts } from '../services/productService';
