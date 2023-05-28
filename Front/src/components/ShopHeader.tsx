@@ -5,7 +5,14 @@ import { ShoppingCartContext } from "../context/ShoppingCartContext";
 import PageCart from "../pages/PageCart";
 
 const ShopHeader = () => {
-  const { isCartOpen, closeCart, openCart, cartItemsCount } = useContext(ShoppingCartContext);
+  const { isCartOpen, closeCart, openCart, shoppingCart } = useContext(ShoppingCartContext);
+
+  let cartItemsCount = 0;
+  if (shoppingCart) {
+    for (const item of shoppingCart.cartItems) {
+      cartItemsCount += item.quantity;
+    }
+  }
 
   return (
     <header className="fixed top-0 z-50 w-full bg-white">
