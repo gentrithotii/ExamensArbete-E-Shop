@@ -2,12 +2,9 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ProductProvider } from './context/ProductContext';
 import { ShoppingCartProvider } from './context/ShoppingCartContext';
 import { OrderProvider } from './context/OrderContext';
-
-import ProductPage from './pages/ProductPage';
-import CartPage from './pages/PageCart';
-import OrderPage from './pages/OrderPage';
-import ProductDetailPage from './pages/ProductDetailPage';
-import ShopHeader from './components/ShopHeader';
+import ProductPageLayout from "./layouts/productPageLayout";
+import PageCartLayout from "./layouts/pageCartLayout";
+import ProductDetailPageLayout from "./layouts/productDetailsPageLayout";
 
 function App() {
   return (
@@ -15,12 +12,11 @@ function App() {
       <ShoppingCartProvider>
         <ProductProvider>
           <OrderProvider>
-            <ShopHeader />
             <Routes>
-              <Route path="/" element={<ProductPage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/products/:id" element={<ProductDetailPage />} />
-              <Route path="/orders" element={<OrderPage />} />
+              <Route path="/" element={<ProductPageLayout />} />
+              <Route path="/cart" element={<PageCartLayout />} />
+              <Route path="/products/:id" element={<ProductDetailPageLayout />} />
+              {/* <Route path="/orders" element={<EmptyLayout />} /> */}
             </Routes>
           </OrderProvider>
         </ProductProvider>
