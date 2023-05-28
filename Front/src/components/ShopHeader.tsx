@@ -6,14 +6,14 @@ import PageCart from "../pages/PageCart";
 
 const ShopHeader = () => {
   const { isCartOpen, closeCart, openCart, cartItemsCount } = useContext(ShoppingCartContext);
+
   return (
     <header className="relative bg-white">
-
-      <nav aria-label="Top" className="mx-auto w-full px-4 sm:px-6 lg:px-8">
+      <nav aria-label="Top" className="mx-auto w-full px-4">
         <div className="border-b border-gray-200">
           <div className="flex h-16 items-center">
             {/* Logo */}
-            <div className="ml-4 flex lg:ml-0">
+            <div className="flex-shrink-0 ml-4">
               <Link to="/">
                 <span className="sr-only">Your Company</span>
                 <img
@@ -26,16 +26,16 @@ const ShopHeader = () => {
 
             {/* Navigation Links */}
             <div className="hidden lg:ml-8 lg:block lg:self-stretch">
-              <div className="flex h-full space-x-8">
+              <div className="flex h-full space-x-8 items-center">
                 <Link to="/" className="text-sm font-medium text-gray-700 hover:text-gray-800">Home</Link>
               </div>
             </div>
 
             {/* User Links */}
-            <div className="ml-auto flex items-center">
+            <div className="ml-auto flex items-center space-x-4">
               <Link to="/login" className="text-sm font-medium text-gray-700 hover:text-gray-800">Sign in</Link>
               <span className="h-6 w-px bg-gray-200" aria-hidden="true" />
-              <Link to="/register" className="text-sm font-medium text-gray-700 hover:text-gray-800">Create account</Link>
+              <Link to="/register" className="text-sm font-medium text-gray-700 hover:text-gray-800 pl-4">Create account</Link>
             </div>
 
             {/* Search */}
@@ -64,7 +64,7 @@ const ShopHeader = () => {
         </div>
         {isCartOpen && <PageCart onClose={closeCart} />}
       </nav>
-    </header >
+    </header>
   );
 };
 
