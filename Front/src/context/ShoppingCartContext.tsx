@@ -8,6 +8,10 @@ interface ShoppingCartContextProps {
     error: string;
     addProductToCart: (productId: number) => Promise<void>;
     removeProductFromCart: (productId: number) => Promise<void>;
+    isCartOpen: boolean;
+    openCart: () => void;
+    closeCart: () => void;
+    cartItemsCount: number;
 }
 
 export const ShoppingCartContext = createContext<ShoppingCartContextProps>({
@@ -18,6 +22,12 @@ export const ShoppingCartContext = createContext<ShoppingCartContextProps>({
     addProductToCart: async () => { },
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     removeProductFromCart: async () => { },
+    isCartOpen: false,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    openCart: () => { },
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    closeCart: () => { },
+    cartItemsCount: 0,
 });
 
 interface ShoppingCartProviderProps {
@@ -28,11 +38,33 @@ export const ShoppingCartProvider: React.FC<ShoppingCartProviderProps> = ({ chil
     const [shoppingCart, setShoppingCart] = useState<ShoppingCart | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>('');
+    const [isCartOpen, setIsCartOpen] = useState(false);
+    const [cartItemsCount, setCartItemsCount] = useState(0);
+
+    const countCartItems = () => {
+        if (!shoppingCart) {
+            return 0;
+        }
+        let count = 0;
+        for (const item of shoppingCart.cartItems) {
+            count += item.quantity;
+        }
+        setCartItemsCount(count);
+    };
+
+    const openCart = () => {
+        setIsCartOpen(true);
+    };
+
+    const closeCart = () => {
+        setIsCartOpen(false);
+    };
 
     const fetchShoppingCart = async () => {
         try {
             const cart = await getShoppingCart();
             setShoppingCart(cart);
+            countCartItems();
             setLoading(false);
         } catch (err) {
             if (err instanceof Error) {
@@ -43,6 +75,7 @@ export const ShoppingCartProvider: React.FC<ShoppingCartProviderProps> = ({ chil
             setLoading(false);
         }
     };
+
     const removeProductFromCart = async (productId: number) => {
         try {
             await serviceRemoveProductFromCart(productId);
@@ -71,10 +104,11 @@ export const ShoppingCartProvider: React.FC<ShoppingCartProviderProps> = ({ chil
 
     useEffect(() => {
         fetchShoppingCart();
-    }, []);
+        countCartItems();
+    },);
 
     return (
-        <ShoppingCartContext.Provider value={{ shoppingCart, loading, error, addProductToCart, removeProductFromCart }}>
+        <ShoppingCartContext.Provider value={{ cartItemsCount, isCartOpen, openCart, closeCart, shoppingCart, loading, error, addProductToCart, removeProductFromCart }}>
             {children}
         </ShoppingCartContext.Provider>
     );
