@@ -2,9 +2,10 @@ import { useState, useContext, useEffect } from 'react';
 import { ProductContext } from '../context/ProductContext';
 import { Link } from 'react-router-dom';
 import { Product } from '../types/product';
+import Loading from '../components/Loading';
 
 const ProductPage = () => {
-  const { products } = useContext(ProductContext);
+  const { products, loading } = useContext(ProductContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
@@ -22,6 +23,11 @@ const ProductPage = () => {
     const query = e.target.value;
     setSearchQuery(query);
   };
+
+  if (loading) {
+    return <Loading />
+  }
+
 
   return (
     <div className="pt-16">

@@ -1,30 +1,17 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { ProductContext } from '../context/ProductContext';
-import { Product } from '../types/product';
-import { getProductsWithId } from '../services/productService';
 import { ShoppingCartContext } from '../context/ShoppingCartContext';
+import Loading from '../components/Loading';
 
 
 const ProductDetailPage = () => {
     const { id = '' } = useParams<{ id?: string }>();
-    const { products } = useContext(ProductContext);
-    const [product, setProduct] = useState<Product | null>(null);
+    const { products, loading } = useContext(ProductContext);
+    const product = products.find(p => p.id === parseInt(id));
     const { addProductToCart } = useContext(ShoppingCartContext);
 
-    useEffect(() => {
-        const getProduct = async () => {
-            const productId = parseInt(id);
-            const product = await getProductsWithId(productId);
-            setProduct(product ?? null);
-            return product;
-        }
-
-        getProduct();
-    }, [id, products]);
-
     const addProduct = () => {
-
         if (id) {
             addProductToCart(parseInt(id));
         }
@@ -34,6 +21,9 @@ const ProductDetailPage = () => {
         return <div>Product not found</div>;
     }
 
+    if (loading) {
+        return <Loading />
+    }
     return (
         <div className="bg-white pt-10">
             <div className="pt-10">
