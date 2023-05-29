@@ -25,10 +25,10 @@ const ProductDetailPage = () => {
         return <Loading />
     }
     return (
-        <div className="bg-white pt-10">
-            <div className="pt-10">
+        <div className="bg-white" style={{ transform: 'scale(0.85)' }}>
+            <div>
 
-                {/* Image  */}
+                {/* Image */}
                 <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-x-8 lg:px-8">
                     <div className="aspect-h-4 aspect-w-3 hidden overflow-hidden rounded-lg lg:block">
                         <img
@@ -45,11 +45,18 @@ const ProductDetailPage = () => {
                                 className="h-full w-full object-cover object-center"
                             />
                         </div>
+                        <div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg">
+                            <img
+                                src={product.images[2]?.url}
+                                alt={product.images[2]?.url}
+                                className="h-full w-full object-cover object-center"
+                            />
+                        </div>
                     </div>
                     <div className="aspect-h-5 aspect-w-4 lg:aspect-h-4 lg:aspect-w-3 sm:overflow-hidden sm:rounded-lg">
                         <img
-                            src={product.images[2]?.url}
-                            alt={product.images[2]?.url}
+                            src={product.images[3]?.url}
+                            alt={product.images[3]?.url}
                             className="h-full w-full object-cover object-center"
                         />
                     </div>
