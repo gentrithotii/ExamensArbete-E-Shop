@@ -5,5 +5,5 @@ export interface CartItem {
   quantity: number;
   productId: number;
   product: Product;
-  quantityPrice: number;
+  totalPrice: number;
 }
