@@ -68,12 +68,12 @@ const PageCart: FunctionComponent = () => {
                                   <h3>
                                     <p>{cartItem.product.name}</p>
                                   </h3>
-                                  <p className="ml-4">${cartItem.product.price}</p>
+                                  <p className="ml-4">${cartItem.totalPrice}</p>
                                 </div>
                               </div>
                               <div className="flex flex-1 items-end justify-between text-sm">
                                 <p className="text-gray-500">Qty {cartItem.quantity}</p>
-                                <p className="text-gray-500">Qty price {cartItem.quantityPrice}</p>
+                                <p className="text-gray-500">Price per piece ${cartItem.product.price}</p>
                                 <div className="flex">
                                   <button
                                     type="button"
