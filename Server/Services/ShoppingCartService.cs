@@ -55,7 +55,7 @@ public class ShoppingCartService : IShoppingCartService
         var existingCartItem = shoppingCart.CartItems.FirstOrDefault(ci => ci.Product.Id == productId);
         if (existingCartItem != null)
         {
-            existingCartItem.Quantity += 1; // Increment quantity by 1
+            existingCartItem.Quantity += 1;
         }
         else
         {
@@ -63,7 +63,7 @@ public class ShoppingCartService : IShoppingCartService
             {
                 ProductId = productId,
                 Product = product,
-                Quantity = 1, // Set initial quantity to 1
+                Quantity = 1,
             };
             shoppingCart.CartItems.Add(newCartItem);
         }
