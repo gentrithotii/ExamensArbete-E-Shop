@@ -8,16 +8,12 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 const PageCart: FunctionComponent = () => {
   const { shoppingCart, removeProductFromCart, closeCart, isCartOpen } = useContext(ShoppingCartContext);
 
-  // const handleClose = () => {
-  //   onClose();
-  // };
 
   const removeProduct = (id: number) => {
     if (id) {
       removeProductFromCart(id);
     }
   }
-
 
   return (
     <Transition.Root show={isCartOpen} as={Fragment}>
