@@ -46,6 +46,12 @@ public class ShoppingCartService : IShoppingCartService
     {
         var shoppingCart = await GetCartAsync();
 
+        if (shoppingCart == null)
+        {
+            shoppingCart = new ShoppingCart();
+            _context.ShoppingCarts.Add(shoppingCart);
+        }
+
         var product = await _context.Products.FindAsync(productId);
         if (product == null)
         {
@@ -70,6 +76,7 @@ public class ShoppingCartService : IShoppingCartService
 
         await _context.SaveChangesAsync();
     }
+
 
     public async Task RemoveProductFromCartAsync(int productId)
     {
