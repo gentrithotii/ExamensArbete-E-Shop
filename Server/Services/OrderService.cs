@@ -22,43 +22,6 @@ namespace Server.Services
             _mapper = mapper;
         }
 
-        public async Task<OrderDTO> AddOrderAsync(OrderDTO orderDto, IEnumerable<OrderItemDTO> orderItemDtos)
-        {
-            var order = _mapper.Map<Order>(orderDto);
-            var orderItems = _mapper.Map<List<OrderItem>>(orderItemDtos);
-
-            if (order == null)
-            {
-                throw new ArgumentNullException(nameof(order));
-            }
-
-            if (orderItems == null)
-            {
-                throw new ArgumentNullException(nameof(orderItems));
-            }
-
-            foreach (var item in orderItems)
-            {
-                var product = await _context.Products.FindAsync(item.ProductId);
-                if (product == null)
-                {
-                    throw new Exception($"Product with id: {item.ProductId} not found.");
-                }
-
-                item.Product = product;
-                order.OrderItems.Add(item);
-                order.TotalPrice += item.Quantity * product.Price;
-            }
-
-            var orderEntity = await _context.Orders.AddAsync(order);
-            await _context.SaveChangesAsync();
-
-            var cartItemsToDelete = _context.CartItems.Where(c => orderItems.Select(oi => oi.ProductId).Contains(c.ProductId));
-            _context.CartItems.RemoveRange(cartItemsToDelete);
-            await _context.SaveChangesAsync();
-
-            return _mapper.Map<OrderDTO>(orderEntity.Entity);
-        }
 
         public async Task<IEnumerable<OrderDTO>> GetAllOrdersAsync()
         {
@@ -75,20 +38,6 @@ namespace Server.Services
                 throw new Exception($"No order found with ID: {id}");
 
             return _mapper.Map<OrderDTO>(order);
-        }
-
-        public async Task<OrderDTO> UpdateOrderAsync(OrderDTO orderDto)
-        {
-            var order = _mapper.Map<Order>(orderDto);
-            var existingOrder = await _context.Orders.FindAsync(order.Id);
-
-            if (existingOrder == null)
-                throw new Exception($"No order found with ID: {order.Id}");
-
-            _context.Entry(existingOrder).CurrentValues.SetValues(order);
-            await _context.SaveChangesAsync();
-
-            return _mapper.Map<OrderDTO>(existingOrder);
         }
 
         public async Task DeleteOrderAsync(int id)

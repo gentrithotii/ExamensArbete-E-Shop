@@ -62,23 +62,6 @@ public class OrdersController : ControllerBase
         }
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateOrder(int id, [FromBody] OrderDTO orderDto)
-    {
-        if (id != orderDto.Id)
-            return BadRequest();
-
-        try
-        {
-            var updatedOrder = await _orderService.UpdateOrderAsync(orderDto);
-            return Ok(updatedOrder);
-        }
-        catch (Exception e)
-        {
-            return NotFound(e.Message);
-        }
-    }
-
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteOrder(int id)
