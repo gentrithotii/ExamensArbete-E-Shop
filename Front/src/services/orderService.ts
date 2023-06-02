@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Order } from "../types/order";
 
 
 //For Testing purpose
