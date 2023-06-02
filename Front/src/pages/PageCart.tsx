@@ -2,16 +2,24 @@ import { Fragment, FunctionComponent, useContext } from 'react';
 import { ShoppingCartContext } from '../context/ShoppingCartContext';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { OrderContext } from '../context/OrderContext';
 
 
 
 const PageCart: FunctionComponent = () => {
   const { shoppingCart, removeProductFromCart, closeCart, isCartOpen } = useContext(ShoppingCartContext);
+  const { createOrder } = useContext(OrderContext)
 
 
   const removeProduct = (id: number) => {
     if (id) {
       removeProductFromCart(id);
+    }
+  }
+
+  const createOrderFromCart = (id: number) => {
+    if (id !== undefined) {
+      createOrder(id);
     }
   }
 
@@ -95,17 +103,16 @@ const PageCart: FunctionComponent = () => {
                   </div>
                   <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
                   <div className="mt-6">
-                    <a
-                      href="#"
+                    <button
+                      onClick={() => { if (shoppingCart?.id !== undefined) { createOrderFromCart(shoppingCart.id) } }}
                       className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                     >
                       Checkout
-                    </a>
+                    </button>
                   </div>
+
                   <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                     <p>
-
-
                       <button
                         type="button"
                         className="font-medium text-indigo-600 hover:text-indigo-500"

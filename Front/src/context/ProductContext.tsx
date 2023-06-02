@@ -10,7 +10,7 @@ interface ProductContextProps {
 
 export const ProductContext = createContext<ProductContextProps>({
   products: [],
-  loading: true,
+  loading: false,
   error: '',
 });
 
@@ -20,7 +20,7 @@ interface ProductProviderProps {
 
 export const ProductProvider: React.FC<ProductProviderProps> = ({ children }) => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
   useEffect(() => {

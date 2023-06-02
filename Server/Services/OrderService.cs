@@ -62,9 +62,10 @@ namespace Server.Services
 
         public async Task<IEnumerable<OrderDTO>> GetAllOrdersAsync()
         {
-            var orders = await _context.Orders.Include(o => o.OrderItems).ThenInclude(oi => oi.Product).ToListAsync();
+            var orders = await _context.Orders.Include(o => o.OrderItems).ThenInclude(oi => oi.Product).ThenInclude(p => p.Images).ToListAsync();
             return _mapper.Map<IEnumerable<OrderDTO>>(orders);
         }
+
 
         public async Task<OrderDTO> GetOrderByIdAsync(int id)
         {
@@ -103,10 +104,7 @@ namespace Server.Services
 
         public async Task<OrderDTO> CreateOrderFromCartAsync(int cartId)
         {
-            var shoppingCart = await _context.ShoppingCarts
-                .Include(sc => sc.CartItems)
-                    .ThenInclude(ci => ci.Product)
-                .FirstOrDefaultAsync(sc => sc.Id == cartId);
+            var shoppingCart = await _context.ShoppingCarts.Include(sc => sc.CartItems).ThenInclude(ci => ci.Product).ThenInclude(i => i.Images).FirstOrDefaultAsync(sc => sc.Id == cartId);
 
             if (shoppingCart == null)
             {
@@ -134,7 +132,7 @@ namespace Server.Services
 
             _context.Orders.Add(order);
 
-            // Clear cart
+
             shoppingCart.CartItems.Clear();
             await _context.SaveChangesAsync();
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import React, { createContext, useState, useEffect } from "react";
 import { ShoppingCart } from "../types/shoppingCart";
 import { getShoppingCart, addProductToCart as serviceAddProductToCart, removeProductFromCart as serviceRemoveProductFromCart } from '../services/cartService';
@@ -11,21 +12,19 @@ interface ShoppingCartContextProps {
     isCartOpen: boolean;
     openCart: () => void;
     closeCart: () => void;
+    fetchShoppingCart: () => Promise<void>;
 }
 
 export const ShoppingCartContext = createContext<ShoppingCartContextProps>({
     shoppingCart: null,
     loading: true,
     error: '',
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     addProductToCart: async () => { },
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     removeProductFromCart: async () => { },
     isCartOpen: false,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     openCart: () => { },
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     closeCart: () => { },
+    fetchShoppingCart: async () => { },
 });
 
 interface ShoppingCartProviderProps {
@@ -92,7 +91,7 @@ export const ShoppingCartProvider: React.FC<ShoppingCartProviderProps> = ({ chil
     }, []);
 
     return (
-        <ShoppingCartContext.Provider value={{ isCartOpen, openCart, closeCart, shoppingCart, loading, error, addProductToCart, removeProductFromCart }}>
+        <ShoppingCartContext.Provider value={{ isCartOpen, openCart, closeCart, shoppingCart, loading, error, addProductToCart, removeProductFromCart, fetchShoppingCart }}>
             {children}
         </ShoppingCartContext.Provider>
     );

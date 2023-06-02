@@ -1,6 +1,8 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { Order } from "../types/order";
-import { addOrderAsync, getOrders } from "../services/orderService";
+import { createOrderAsync, getOrders } from "../services/orderService";
+import { ShoppingCartContext } from "./ShoppingCartContext";
+
 
 
 
@@ -8,7 +10,7 @@ interface OrderContextProps {
   orders: Order[];
   loading: boolean;
   error: string;
-  createOrder: (newOrder: Order) => Promise<Order>;
+  createOrder: (id: number) => void;
 }
 
 export const OrderContext = createContext<OrderContextProps>({
@@ -26,6 +28,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
+  const { fetchShoppingCart } = useContext(ShoppingCartContext);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -45,10 +48,11 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     fetchOrders();
   }, []);
 
-  const createOrder = async (newOrder: Order) => {
+  const createOrder = async (id: number) => {
     try {
-      const order = await addOrderAsync(newOrder);
+      const order = await createOrderAsync(id);
       setOrders([...orders, order]);
+      fetchShoppingCart();
       return order;
     } catch (err) {
       if (err instanceof Error) {

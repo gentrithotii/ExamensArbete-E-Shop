@@ -102,6 +102,7 @@ public class ShoppingCartService : IShoppingCartService
     {
         var shoppingCart = await GetCartAsync();
 
+        _context.CartItems.RemoveRange(shoppingCart.CartItems);
         shoppingCart.CartItems.Clear();
 
         await _context.SaveChangesAsync();
